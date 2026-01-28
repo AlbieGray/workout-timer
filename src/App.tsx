@@ -23,6 +23,8 @@ function App() {
   const [stateString, setStateString] = useState("")
 
   const [timerExpired, setTimerExpired] = useState(false)
+  const [shortBeepObj, setShortBeepObj] = useState<HTMLAudioElement>()
+  const [longBeepObj, setLongBeepObj] = useState<HTMLAudioElement>()
 
   function countdown(time: number) {
     console.log("starting countdown, time: ", time)
@@ -30,12 +32,12 @@ function App() {
     setTimeRemainingDisplay(timeRemaining.toString())
     var countdownInterval = setInterval(function() {
       if (timeRemaining == 1) {
-	playLongBeep()
+        longBeepObj!.play()
         clearInterval(countdownInterval)
 	setTimerExpired(true)
       } else {
 	if (timeRemaining == 2 || timeRemaining == 3 || timeRemaining == 4) {
-	  playBeep()
+          shortBeepObj!.play()
 	}
         timeRemaining = timeRemaining - 1
 	setTimeRemainingDisplay(timeRemaining.toString())
@@ -45,7 +47,7 @@ function App() {
   }
 
   function runWorkout() {
-    playBeep()
+    shortBeepObj!.play()
     existingCountdowns.forEach((element) => {
       clearInterval(element)})
     setExistingCountdowns([])
@@ -101,18 +103,15 @@ function App() {
 
   }, [intervalState])
 
+  useEffect(() => {
+    setShortBeepObj(new Audio(beepSound))
+    setLongBeepObj(new Audio(longBeepSound))
+  }, [])
 
 
 
 
-  function playBeep() {
-    const beep = new Audio(beepSound)
-    beep.play()
-  }
-  function playLongBeep() {
-    const beep = new Audio(longBeepSound)
-    beep.play()
-  }
+
 
 
   return (
